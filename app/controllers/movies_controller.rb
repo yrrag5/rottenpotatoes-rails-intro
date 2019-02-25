@@ -11,18 +11,30 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.ratings
-    @sort = params[:sort] || session[:sort]
-    session[:ratings] = session[:ratings] || {'G'=>'', 'PG'=>'', 'PG-13' =>"", 'R'=>''}
-    @t_param = params[:ratings] || session[:ratings]
-    session[:sort] = @sort
-    @movies = Movie.where(rating: session[:ratings].keys).order(session[:sort])
-    
-    if(params[:sort].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:rating].nil?))
-      flash.keep
-      redirect_to movie_path(sort: session[:sort], ratings: session[:ratings])
+    if(!params.has_key?(:sort) && !params.has_key?(:ratings))
+      if(session.has_key?(:sort) || session.has_key?(:ratings))
+        redirect_to movie_path(:sort=>session[:sort], ratings=>session[:ratings])
       end
-  end
+    end
+    
+    @sort = params.has_key?(:sort) ? (session[:sort] = params[:sort]) : session[:sort]
+    @all_ratings = Movie.all_ratings.keys
+    @ratings = params[:ratings]
+    if(@ratings != nil)
+      ratings = @ratings.keys
+      session[:ratings] = @ratings
+    else
+      if(!params.has_key?(:commit) && !params.has_key?(:sort))
+        ratings = Movie.all_ratings.keys
+        session[:ratings] = Movie.all_ratings
+      else
+        ratings = session[:ratings].keys
+      end
+    end
+  
+    @movies = Movie.where(rating: session[:ratings].keys).order(session[:sort])
+    @mark = ratings
+  end 
 
   def new
   end
