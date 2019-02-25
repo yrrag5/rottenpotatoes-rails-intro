@@ -32,7 +32,7 @@ class MoviesController < ApplicationController
       end
     end
   
-    @movies = Movie.where(rating: session[:ratings].keys).order(session[:sort])
+    @movies = Movie.where(ratings: session[:ratings].keys).order(session[:sort])
     @mark = ratings
   end 
 
