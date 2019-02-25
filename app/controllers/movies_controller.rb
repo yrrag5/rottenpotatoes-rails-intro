@@ -18,8 +18,7 @@ class MoviesController < ApplicationController
     end
     
     @sort = params.has_key?(:sort) ? (session[:sort] = params[:sort]) : session[:sort]
-    #@all_ratings = Movie.all_ratings.key
-    @all_ratings = Movie.ratings
+    @all_ratings = Movie.all_ratings.key
     @ratings = params[:ratings]
     if(@ratings != nil)
       ratings = @ratings.keys
